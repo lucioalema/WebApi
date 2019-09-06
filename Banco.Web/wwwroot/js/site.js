@@ -10,7 +10,7 @@ $(document).ready(function () {
 });
 
 function traerClientes() {
-    $.getJSON("http://localhost:8082/api/cliente",
+    $.getJSON("http://localhost:64186/api/cliente",
         function (data) {
             $("#tblClientes tbody").html("");
             $.each(data, function (key, val) {
@@ -39,7 +39,7 @@ function agregarCliente() {
         
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:8082/api/cliente',
+            url: 'http://localhost:64186/api/cliente',
             data: JSON.stringify(json),
             success: function (data) {
                 traerClientes();
@@ -54,7 +54,7 @@ function agregarCliente() {
 function eliminarCliente(id) {
     $.ajax({
         type: 'DELETE',
-        url: 'http://localhost:8082/api/cliente/'+id,
+        url: 'http://localhost:64186/api/cliente/'+id,
         success: function (data) {
             traerClientes();
         },

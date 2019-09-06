@@ -23,7 +23,7 @@ namespace Banco.Consola
         {
             client.DefaultRequestHeaders.Accept.Clear();
 
-            var streamTask = client.GetStreamAsync("http://localhost:8082/api/cliente");
+            var streamTask = client.GetStreamAsync("http://localhost:64186/api/cliente");
             var serializer = new DataContractJsonSerializer(typeof(List<Cliente>));
             var clientes = serializer.ReadObject(await streamTask) as List<Cliente>;
             return clientes;
