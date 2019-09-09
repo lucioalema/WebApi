@@ -38,9 +38,31 @@ namespace Banco.WebApi.Controllers
         }
 
         // POST: api/Cliente
+        /// <summary>
+        /// Crea un cliente.
+        /// </summary>
+        /// <remarks>
+        /// Ejemplo de request:
+        ///
+        ///     POST /Cliente
+        ///     {
+        ///        "apellido": "Perez",
+        ///        "nombre": "Juan",
+        ///        "fechaNacimiento": "01/01/1990"
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="cliente"></param>
+        /// <returns>Un nuevo cliente creado</returns>
+        /// <response code="201">Devuelve el nuevo cliente creado</response>
+        // /// <response code="400">Si el modelo es inválido</response> 
         [HttpPost]
+        [ProducesResponseType(typeof(Cliente), StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Cliente>> Post([FromBody] Cliente cliente)
         {
+            //if (!ModelState.IsValid)
+            //    return BadRequest();
             await _clienteService.AddAsync(cliente);
             return CreatedAtAction("Get", new { id = cliente.Id }, cliente);
         }
@@ -61,8 +83,25 @@ namespace Banco.WebApi.Controllers
         }
 
         // DELETE: api/ApiWithActions/5
+        /// <summary>
+        /// Elimina un cliente específico.
+        /// </summary>
+        /// <remarks>
+        /// Ejemplo de request:
+        ///
+        ///     DELETE /Cliente
+        ///     {
+        ///        "id": "1"
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="id"></param>
+        /// <response code="204">La operación fue exitosa pero no devuelve nada en el response</response>
+        /// <response code="404">Si el cliente es null</response> 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Cliente>> Delete(int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(int id)
         {
             var cliente = await _clienteService.GetAsync(id);
             if (cliente == null)
@@ -74,5 +113,7 @@ namespace Banco.WebApi.Controllers
 
             return NoContent();
         }
+
+
     }
 }

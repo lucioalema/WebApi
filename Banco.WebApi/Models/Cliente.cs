@@ -13,9 +13,13 @@ namespace Banco.WebApi.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
+        [StringLength(60)]
+
         public string Apellido { get; set; }
         [Required]
+        [StringLength(60)]
         public string Nombre { get; set; }
+        [DataType(DataType.Date)]
         public DateTime? FechaNacimiento { get; set; }
         public DateTime FechaAlta { get; set; }
     }
