@@ -55,14 +55,10 @@ namespace Banco.WebApi.Controllers
         /// <param name="cliente"></param>
         /// <returns>Un nuevo cliente creado</returns>
         /// <response code="201">Devuelve el nuevo cliente creado</response>
-        // /// <response code="400">Si el modelo es inválido</response> 
         [HttpPost]
         [ProducesResponseType(typeof(Cliente), StatusCodes.Status201Created)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Cliente>> Post([FromBody] Cliente cliente)
         {
-            //if (!ModelState.IsValid)
-            //    return BadRequest();
             await _clienteService.AddAsync(cliente);
             return CreatedAtAction("Get", new { id = cliente.Id }, cliente);
         }
