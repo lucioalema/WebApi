@@ -55,12 +55,15 @@ namespace Banco.WebApi.Services
 
         public async Task<IEnumerable<Cliente>> GetAsync()
         {
-            return await _context.Clientes.ToListAsync();
+            return await _context.Clientes
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<Cliente> GetAsync(int Id)
         {
-            return await _context.Clientes.FirstOrDefaultAsync(x => x.Id == Id);
+            return await _context.Clientes
+                .FindAsync(Id);
         }
 
         public async Task UpdateAsync(Cliente cliente)

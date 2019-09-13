@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Banco.WebApi.DTOs.Requests;
+using Banco.WebApi.DTOs.Responses;
 using Banco.WebApi.Models;
 using Banco.WebApi.Services;
 using Microsoft.AspNetCore.Http;
@@ -11,33 +14,48 @@ namespace Banco.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClienteController : ControllerBase
+    public class ClientesController : ControllerBase
     {
         private readonly IClienteService _clienteService;
+        private readonly IMapper _mapper;
 
-        public ClienteController(IClienteService clienteService)
+        public ClientesController(IClienteService clienteService, IMapper mapper)
         {
             _clienteService = clienteService;
-        }
-        // GET: api/Cliente
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> Get()
-        {
-            var clientes = await _clienteService.GetAsync();
-            return clientes.ToList();
+            _mapper = mapper;
         }
 
-        // GET: api/Cliente/5
+        /// <summary>
+        /// Trae todos los clientes.
+        /// </summary>
+        /// <returns>Lista de todos los clientes.</returns>
+        [HttpGet]
+        public async Task<IEnumerable<ClienteDTO>> Get()
+        {
+            var clientes = await _clienteService.GetAsync();
+            var resources = _mapper.Map<IEnumerable<Cliente>, IEnumerable<ClienteDTO>>(clientes);
+            return resources;
+        }
+
+        /// <summary>
+        /// Retorna un cliente.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Un cliente</returns>
+        /// <response code="404">Si el cliente no existe</response> 
+        /// <response code="200">Devuelve el cliente solicitado</response>
         [HttpGet("{id}", Name = "Get")]
-        public async Task<ActionResult<Cliente>> Get(int id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Get(int id)
         {
             var cliente = await _clienteService.GetAsync(id);
             if (cliente == null)
                 return NotFound();
-            return cliente;
+            var resources = _mapper.Map<Cliente, ClienteDTO>(cliente);
+            return Ok(resources);
         }
 
-        // POST: api/Cliente
         /// <summary>
         /// Crea un cliente.
         /// </summary>
@@ -52,33 +70,57 @@ namespace Banco.WebApi.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <param name="cliente"></param>
+        /// <param name="request"></param>
         /// <returns>Un nuevo cliente creado</returns>
         /// <response code="201">Devuelve el nuevo cliente creado</response>
         [HttpPost]
-        [ProducesResponseType(typeof(Cliente), StatusCodes.Status201Created)]
-        public async Task<ActionResult<Cliente>> Post([FromBody] Cliente cliente)
+        [ProducesResponseType(typeof(ClienteDTO), StatusCodes.Status201Created)]
+        public async Task<ActionResult<ClienteDTO>> Post([FromBody] ClienteAddDTO request)
         {
+            var cliente = _mapper.Map<ClienteAddDTO, Cliente>(request);
             await _clienteService.AddAsync(cliente);
-            return CreatedAtAction("Get", new { id = cliente.Id }, cliente);
+            return CreatedAtAction("Get", new { id = cliente.Id }, request);
         }
 
-        // PUT: api/Cliente/5
+        /// <summary>
+        /// Actualiza un cliente.
+        /// </summary>
+        /// <remarks>
+        /// Ejemplo de request:
+        ///
+        ///     PUT /Clientes
+        ///     {
+        ///        "id": "1",
+        ///        "apellido": "Perez",
+        ///        "nombre": "Juan",
+        ///        "fechaNacimiento": "01/01/1990"
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="request"></param>
+        /// <response code="400">Si el id del query string no es igual al del body</response> 
+        /// <response code="404">Si el cliente no existe</response> 
+        /// <response code="200">Devuelve el cliente actualizado</response>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Cliente cliente)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ClienteDTO), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Put(int id, [FromBody] ClienteUpdateDTO request)
         {
-            if (id != cliente.Id)
-            {
+            if (id != request.Id)
                 return BadRequest();
-            }
+            //var cliente = await _clienteService.GetAsync(id);
+            //if (cliente == null)
+            //{
+            //    return NotFound();
+            //}
 
-            if (!ModelState.IsValid)
-                return BadRequest();
-            await _clienteService.UpdateAsync(cliente);
-            return NoContent();
+            var clienteUpdate = _mapper.Map<ClienteUpdateDTO, Cliente>(request);
+            await _clienteService.UpdateAsync(clienteUpdate);
+            var ClienteDTO = _mapper.Map<Cliente, ClienteDTO>(clienteUpdate);
+            return Ok(ClienteDTO);
         }
 
-        // DELETE: api/ApiWithActions/5
         /// <summary>
         /// Elimina un cliente específico.
         /// </summary>
