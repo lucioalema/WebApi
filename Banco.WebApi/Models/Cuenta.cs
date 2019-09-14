@@ -7,21 +7,19 @@ using System.Threading.Tasks;
 
 namespace Banco.WebApi.Models
 {
-    public class Cliente
+    public class Cuenta
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        [StringLength(60)]
-
-        public string Apellido { get; set; }
+        public int Numero { get; set; }
         [Required]
-        [StringLength(60)]
-        public string Nombre { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime? FechaNacimiento { get; set; }
-        public DateTime FechaAlta { get; set; }
-        public IEnumerable<Cuenta> Cuentas { get; set; }
+        [DataType(DataType.Currency)]
+        public decimal Saldo { get; set; }
+
+        public int ClienteId { get; set; }
+
+        public Cliente Cliente { get; set; }
     }
 }

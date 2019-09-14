@@ -15,27 +15,6 @@ namespace Banco.WebApi.Services
         public ClienteService(ApplicationDbContext context)
         {
             _context = context;
-
-            if (!_context.Clientes.Any())
-            {
-                _context.Clientes.AddRange(
-                    new Cliente()
-                    {
-                        Apellido = "Perez",
-                        Nombre = "Juan",
-                        FechaNacimiento = DateTime.Now,
-                        FechaAlta = DateTime.Now
-                    },
-                    new Cliente()
-                    {
-                        Apellido = "Castro",
-                        Nombre = "Luis",
-                        FechaNacimiento = DateTime.Now.AddYears(1),
-                        FechaAlta = DateTime.Now
-                    }
-                );
-                _context.SaveChanges();
-            }
         }
         public async Task AddAsync(Cliente cliente)
         {
@@ -55,13 +34,25 @@ namespace Banco.WebApi.Services
 
         public async Task<IEnumerable<Cliente>> GetAsync()
         {
-            return await _context.Clientes.ToListAsync();
+            return await _context.Clientes
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<Cliente> GetAsync(int Id)
         {
-            return await _context.Clientes.FirstOrDefaultAsync(x => x.Id == Id);
+            return await _context.Clientes
+                .FindAsync(Id);
         }
+
+        public async Task<Cliente> GetByCuentatAsync(int Id, int IdCuenta)
+        {
+            return await _context.Clientes
+                .Include(x => x.Cuentas)
+                .Where(x => x.Cuentas.Any(y => y.Id == IdCuenta))
+                .FirstOrDefaultAsync(x => x.Id == Id);
+        }
+        
 
         public async Task UpdateAsync(Cliente cliente)
         {

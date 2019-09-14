@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
 using Banco.WebApi.Data;
+using Banco.WebApi.Mapping;
 using Banco.WebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -73,6 +75,11 @@ namespace Banco.WebApi
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+
+            services.AddAutoMapper(
+                typeof(ModelToResponseProfile),
+                typeof(RequestToModelProfile)
+                );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

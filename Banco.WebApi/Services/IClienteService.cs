@@ -10,6 +10,7 @@ namespace Banco.WebApi.Services
     {
         Task<IEnumerable<Cliente>> GetAsync();
         Task<Cliente> GetAsync(int Id);
+        Task<Cliente> GetByCuentatAsync(int Id, int IdCuenta); 
         Task AddAsync(Cliente cliente);
         Task DeleteAsync(int Id);
         Task UpdateAsync(Cliente cliente);
