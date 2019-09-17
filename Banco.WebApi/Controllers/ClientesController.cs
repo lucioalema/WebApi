@@ -7,6 +7,7 @@ using Banco.WebApi.DTOs.Requests;
 using Banco.WebApi.DTOs.Responses;
 using Banco.WebApi.Models;
 using Banco.WebApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,7 @@ namespace Banco.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = nameof(Rol.Usuario))]
     public class ClientesController : ControllerBase
     {
         private readonly IClienteService _clienteService;
