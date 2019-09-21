@@ -14,5 +14,6 @@ namespace Banco.WebApi.Services
         Task AddAsync(Cliente cliente);
         Task DeleteAsync(int Id);
         Task UpdateAsync(Cliente cliente);
+        Task<IEnumerable<Cliente>> SearchAsync(string apellido, string nombre, int pageNumber, int pageSize);
     }
 }

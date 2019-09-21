@@ -52,7 +52,19 @@ namespace Banco.WebApi.Services
                 .Where(x => x.Cuentas.Any(y => y.Id == IdCuenta))
                 .FirstOrDefaultAsync(x => x.Id == Id);
         }
-        
+
+        public async Task<IEnumerable<Cliente>> SearchAsync(string apellido, string nombre, int pageNumber, int pageSize)
+        {
+            return await _context.Clientes
+                .Where(x => 
+                    x.Apellido.ToLower().Contains(apellido.ToLower()) &&
+                    x.Nombre.ToLower().Contains(nombre.ToLower()))
+                .OrderBy(x => x.Apellido)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+        }
 
         public async Task UpdateAsync(Cliente cliente)
         {

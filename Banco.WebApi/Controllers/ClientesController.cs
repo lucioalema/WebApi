@@ -13,9 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Banco.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/{action}")]
     [ApiController]
-    [Authorize(Roles = nameof(Rol.Usuario))]
+    [Authorize(Roles = nameof(Rol.Administrador))]
     public class ClientesController : ControllerBase
     {
         private readonly IClienteService _clienteService;
@@ -161,6 +161,23 @@ namespace Banco.WebApi.Controllers
                 return NotFound();
             var resources = _mapper.Map<Cliente, ClienteDTO>(cliente);
             return Ok(resources);
+        }
+
+        [HttpGet(Name = "Search")]
+        public async Task<IActionResult> Search
+            (
+                string apellido = "", 
+                string nombre = "", 
+                int? pageNumber = 1,
+                int? pageSize = 10
+            )
+        {
+            var clientes = await _clienteService.SearchAsync(apellido, nombre, pageNumber.Value, pageSize.Value);
+            if (!clientes.Any())
+                return NotFound();
+            var clientesDTO = _mapper
+                .Map<IEnumerable<Cliente>, IEnumerable<ClienteDTO>>(clientes);
+            return Ok(clientesDTO);
         }
     }
 }
