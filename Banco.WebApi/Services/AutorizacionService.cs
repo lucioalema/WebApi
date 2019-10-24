@@ -49,15 +49,16 @@ namespace Banco.WebApi.Services
                 Expires = DateTime.UtcNow.AddDays(min),
                 Subject = new ClaimsIdentity(new List<Claim>
                 {
-                    new Claim("userid", user.Mail),
-                    new Claim("role", user.Rol.ToString())
+                    new Claim(ClaimTypes.Name, user.Mail),
+                    new Claim(ClaimTypes.Email, user.Mail),
+                    new Claim(ClaimTypes.Role, user.Rol.ToString())
                 }),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = jwtTokenHandler.CreateJwtSecurityToken(tokenDescriptor);
             var token = jwtTokenHandler.WriteToken(jwtToken);
-            return JsonConvert.SerializeObject(token);
+            return token;
         }
     }
 }

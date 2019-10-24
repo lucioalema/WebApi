@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Banco.WebApi.Controllers
 {
-    [Route("api/[controller]/{action}")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = nameof(Rol.Administrador))]
     public class ClientesController : ControllerBase
@@ -47,7 +47,7 @@ namespace Banco.WebApi.Controllers
         /// <returns>Un cliente</returns>
         /// <response code="404">Si el cliente no existe</response> 
         /// <response code="200">Devuelve el cliente solicitado</response>
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(int id)
@@ -163,7 +163,7 @@ namespace Banco.WebApi.Controllers
             return Ok(resources);
         }
 
-        [HttpGet(Name = "Search")]
+        [HttpGet("search")]
         public async Task<IActionResult> Search
             (
                 string apellido = "", 
